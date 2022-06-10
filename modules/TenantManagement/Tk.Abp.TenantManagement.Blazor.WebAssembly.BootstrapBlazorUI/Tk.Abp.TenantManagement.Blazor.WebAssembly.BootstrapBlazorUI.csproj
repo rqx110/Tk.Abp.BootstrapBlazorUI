@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\configureawait.props" />
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Volo.Abp.TenantManagement.HttpApi.Client" Version="5.2.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\FeatureManagement\Tk.Abp.FeatureManagement.Blazor.WebAssembly.BootstrapBlazorUI\Tk.Abp.FeatureManagement.Blazor.WebAssembly.BootstrapBlazorUI.csproj" />
+        <ProjectReference Include="..\Tk.Abp.TenantManagement.Blazor.BootstrapBlazorUI\Tk.Abp.TenantManagement.Blazor.BootstrapBlazorUI.csproj" />
+    </ItemGroup>
+    
+</Project>

@@ -1,0 +1,21 @@
+﻿@inherits Volo.Abp.AspNetCore.Components.AbpComponentBase
+
+<ValidateForm Model="@AbpBootstrapBlazorThemeOptions">
+    <div class="row g-3">
+        <div class="col-12">
+            <Select DisplayText="Theme" ShowLabel="true"
+                    @bind-Value="@Options.Value.Theme">
+            </Select>
+        </div>
+        <div class="col-12">
+            <Select DisplayText="Menu placement" ShowLabel="true"
+                    @bind-Value="@Options.Value.MenuPlacement">
+            </Select>
+        </div>
+        <div class="col-12">
+            <Button Color="@Color.Primary" ButtonType="ButtonType.Submit" OnClick="@UpdateSettingAsync">
+                @L["Submit"]
+            </Button>
+        </div>
+    </div>
+</ValidateForm>

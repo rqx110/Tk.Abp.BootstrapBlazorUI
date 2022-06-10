@@ -1,0 +1,69 @@
+﻿@page "/tenant-management/tenants"
+@attribute [Authorize(TenantManagementPermissions.Tenants.Default)]
+@using Microsoft.AspNetCore.Authorization
+@using Tk.Abp.AspnetCore.Components.Web.BootstrapBlazorTheme.Layout
+@using Tk.Abp.FeatureManagement.Blazor.BootstrapBlazorUI.Components
+@using Volo.Abp.TenantManagement.Localization
+@using Volo.Abp.TenantManagement
+@inject AbpBlazorMessageLocalizerHelper<AbpTenantManagementResource> LH
+@inherits AbpCrudPageBase<ITenantAppService, TenantDto, Guid, GetTenantsInput, TenantCreateDto, TenantUpdateDto>
+
+<AbpPageHeader Title="@L["Tenants"]" BreadcrumbItems="@BreadcrumbItems" Toolbar="@Toolbar"/>
+
+<div class="page-content">
+    <AbpExtensibleDataGrid TItem="TenantDto"
+                           OnQueryAsync="@OnQueryAsync"
+                           Columns="@TenantManagementTableColumns">
+    </AbpExtensibleDataGrid>
+</div>
+
+@if (HasCreatePermission)
+{
+    <Modal @ref="CreateModal">
+        <ModalDialog Title="@L["NewTenant"]"
+                     Size="Size.Large"
+                     ShowFooter="false">
+            <BodyTemplate>
+                <ValidateForm Model="@NewEntity" OnValidSubmit="@CreateEntityAsync">
+                    <Row>
+                        <BootstrapInput @bind-Value="@NewEntity.Name" ShowLabel="true" DisplayText="@L["TenantName"]"/>
+                        <BootstrapInput @bind-Value="@NewEntity.AdminEmailAddress" type="email" ShowLabel="true" DisplayText="@L["DisplayName:AdminEmailAddress"]"/>
+                        <BootstrapPassword @bind-Value="@NewEntity.AdminPassword" ShowLabel="true" DisplayText="@L["DisplayName:AdminPassword"]"/>
+                        <ExtensionProperties TEntityType="TenantCreateDto" TResourceType="AbpTenantManagementResource" Entity="@NewEntity" LH="@LH"/>
+                    </Row>
+                    <div class="form-footer mt-3">
+                        <Button Color="Color.Secondary" Icon="fa fa-times" Text="@L["Cancel"]" OnClick="@CloseCreateModalAsync"></Button>
+                        <Button Color="Color.Primary" ButtonType="ButtonType.Submit" Icon="fa fa-save" Text="@L["Save"]"></Button>
+                    </div>
+                </ValidateForm>
+            </BodyTemplate>
+        </ModalDialog>
+    </Modal>
+}
+
+@if (HasUpdatePermission)
+{
+    <Modal @ref="EditModal">
+        <ModalDialog Title="@L["Edit"]"
+                     Size="Size.Large"
+                     ShowFooter="false">
+            <BodyTemplate>
+                <ValidateForm Model="@EditingEntity" OnValidSubmit="@UpdateEntityAsync">
+                    <Row>
+                        <BootstrapInput @bind-Value="@NewEntity.Name" ShowLabel="true" DisplayText="@L["TenantName"]"/>
+                        <ExtensionProperties TEntityType="TenantUpdateDto" TResourceType="AbpTenantManagementResource" Entity="@EditingEntity" LH="@LH"/>
+                    </Row>
+                    <div class="form-footer mt-3">
+                        <Button Color="Color.Secondary" Icon="fa fa-times" Text="@L["Cancel"]" OnClick="@CloseEditModalAsync"></Button>
+                        <Button Color="Color.Primary" ButtonType="ButtonType.Submit" Icon="fa fa-save" Text="@L["Save"]"></Button>
+                    </div>
+                </ValidateForm>
+            </BodyTemplate>
+        </ModalDialog>
+    </Modal>
+}
+
+@if (HasManageFeaturesPermission)
+{
+    <FeatureManagementModal @ref="FeatureManagementModal"/>
+}

@@ -1,0 +1,15 @@
+﻿@typeparam TEntity
+@typeparam TResourceType
+@using Volo.Abp.Localization
+@inherits ExtensionPropertyComponentBase<TEntity, TResourceType>
+
+@if (PropertyInfo != null && Entity != null)
+{
+    <Select TValue="int"
+            Items="SelectItems"
+            @bind-Value="@SelectedValue"
+            ValidateRules="@CustomerRules"
+            ShowLabel="true"
+            DisplayText="@PropertyInfo.GetLocalizedDisplayName(StringLocalizerFactory)">
+    </Select>
+}

@@ -1,0 +1,114 @@
+﻿@page "/identity/users"
+@attribute [Authorize(IdentityPermissions.Users.Default)]
+@using Microsoft.AspNetCore.Authorization
+@using Tk.Abp.AspnetCore.Components.Web.BootstrapBlazorTheme.Layout
+@using Tk.Abp.PermissionManagement.Blazor.BootstrapBlazorUI.Components
+@using Volo.Abp.Identity
+@using Volo.Abp.Identity.Localization
+@inject AbpBlazorMessageLocalizerHelper<IdentityResource> LH
+@inherits AbpCrudPageBase<IIdentityUserAppService, IdentityUserDto, Guid, GetIdentityUsersInput, IdentityUserCreateDto, IdentityUserUpdateDto>
+
+<AbpPageHeader Title="@L["Users"]" BreadcrumbItems="@BreadcrumbItems" Toolbar="@Toolbar"/>
+
+<div class="page-content">
+    <AbpExtensibleDataGrid TItem="IdentityUserDto" @ref="DataGrid"
+                           OnQueryAsync="@OnQueryAsync"
+                           Columns="@UserManagementTableColumns">
+    </AbpExtensibleDataGrid>
+</div>
+
+@if (HasCreatePermission)
+{
+    <Modal @ref="CreateModal">
+        <ModalDialog Title="@L["NewUser"]"
+                     Size="Size.Large"
+                     ShowFooter="false">
+            <BodyTemplate>
+                <ValidateForm Model="@NewEntity" OnValidSubmit="@CreateEntityAsync">
+                    <Tab>
+                        <TabItem Text="@L["UserInformations"]">
+                            <Row>
+                                <BootstrapInput @bind-Value="@NewEntity.UserName" ShowLabel="true" DisplayText="@L["DisplayName:UserName"]"/>
+                                <BootstrapInput @bind-Value="@NewEntity.Name" ShowLabel="true" DisplayText="@L["DisplayName:Name"]"/>
+                                <BootstrapInput @bind-Value="@NewEntity.Surname" ShowLabel="true" DisplayText="@L["DisplayName:Surname"]"/>
+                                <BootstrapPassword @bind-Value="@NewEntity.Password" ShowLabel="true" DisplayText="@L["DisplayName:Password"]"/>
+                                <BootstrapInput @bind-Value="@NewEntity.Email" type="email" ShowLabel="true" DisplayText="@L["DisplayName:Email"]"/>
+                                <BootstrapInput @bind-Value="@NewEntity.PhoneNumber" type="phone" ShowLabel="true" DisplayText="@L["DisplayName:PhoneNumber"]"/>
+                                <Checkbox @bind-Value="NewEntity.IsActive" ShowLabel="false" ShowAfterLabel="true" DisplayText="@L["DisplayName:IsActive"]"></Checkbox>
+                                <Checkbox @bind-Value="NewEntity.LockoutEnabled" ShowLabel="false" ShowAfterLabel="true" DisplayText="@L["DisplayName:LockoutEnabled"]"></Checkbox>
+                                <ExtensionProperties TEntityType="IdentityUserCreateDto" TResourceType="IdentityResource" Entity="@NewEntity" LH="@LH"/>
+                            </Row>
+                        </TabItem>
+
+                        <TabItem Text="@L["Roles"]">
+                            @if (NewUserRoles != null)
+                            {
+                                <Row>
+                                    @foreach (var role in NewUserRoles)
+                                    {
+                                        <Checkbox @bind-Value="role.IsAssigned" ShowLabel="false" ShowAfterLabel="true" DisplayText="@role.Name"></Checkbox>
+                                    }
+                                </Row>
+                            }
+                        </TabItem>
+                    </Tab>
+                    <div class="form-footer mt-3">
+                        <Button Color="Color.Secondary" Icon="fa fa-times" Text="@L["Cancel"]" OnClick="@CloseCreateModalAsync"></Button>
+                        <Button Color="Color.Primary" ButtonType="ButtonType.Submit" Icon="fa fa-save" Text="@L["Save"]"></Button>
+                    </div>
+                </ValidateForm>
+            </BodyTemplate>
+        </ModalDialog>
+    </Modal>
+}
+
+@if (HasUpdatePermission)
+{
+    <Modal @ref="EditModal">
+        <ModalDialog Title="@L["Edit"]"
+                     Size="Size.Large"
+                     ShowFooter="false">
+            <BodyTemplate>
+                <ValidateForm Model="@EditingEntity" OnValidSubmit="@UpdateEntityAsync">
+                    <Tab>
+                        <TabItem Text="@L["UserInformations"]">
+                            <Row>
+                                <BootstrapInput @bind-Value="@EditingEntity.UserName" ShowLabel="true" DisplayText="@L["DisplayName:UserName"]"/>
+                                <BootstrapInput @bind-Value="@EditingEntity.Name" ShowLabel="true" DisplayText="@L["DisplayName:Name"]"/>
+                                <BootstrapInput @bind-Value="@EditingEntity.Surname" ShowLabel="true" DisplayText="@L["DisplayName:Surname"]"/>
+                                <BootstrapPassword @bind-Value="@EditingEntity.Password" ShowLabel="true" DisplayText="@L["DisplayName:Password"]"/>
+                                <BootstrapInput @bind-Value="@EditingEntity.Email" type="email" ShowLabel="true" DisplayText="@L["DisplayName:Email"]"/>
+                                <BootstrapInput @bind-Value="@EditingEntity.PhoneNumber" type="phone" ShowLabel="true" DisplayText="@L["DisplayName:PhoneNumber"]"/>
+                                <Checkbox @bind-Value="EditingEntity.IsActive" ShowLabel="false" ShowAfterLabel="true" DisplayText="@L["DisplayName:IsActive"]"></Checkbox>
+                                <Checkbox @bind-Value="EditingEntity.LockoutEnabled" ShowLabel="false" ShowAfterLabel="true" DisplayText="@L["DisplayName:LockoutEnabled"]"></Checkbox>
+                                <ExtensionProperties TEntityType="IdentityUserUpdateDto" TResourceType="IdentityResource" Entity="@EditingEntity" LH="@LH"/>
+                            </Row>
+                        </TabItem>
+
+                        <TabItem Text="@L["Roles"]">
+                            @if (EditUserRoles != null)
+                            {
+                                <Row>
+                                    @foreach (var role in EditUserRoles)
+                                    {
+                                        <Checkbox @bind-Value="role.IsAssigned" ShowLabel="false" ShowAfterLabel="true" DisplayText="@role.Name"></Checkbox>
+                                    }
+                                </Row>
+                            }
+                        </TabItem>
+                    </Tab>
+                    <div class="form-footer mt-3">
+                        <Button Color="Color.Secondary" Icon="fa fa-times" Text="@L["Cancel"]" OnClick="@CloseEditModalAsync"></Button>
+                        <Button Color="Color.Primary" ButtonType="ButtonType.Submit" Icon="fa fa-save" Text="@L["Save"]"></Button>
+                    </div>
+                </ValidateForm>
+            </BodyTemplate>
+        </ModalDialog>
+    </Modal>
+}
+
+
+@if (HasManagePermissionsPermission)
+{
+    <PermissionManagementModal @ref="PermissionManagementModal"/>
+}

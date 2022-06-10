@@ -1,0 +1,39 @@
+﻿@using global::Localization.Resources.AbpUi
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.JSInterop
+@inherits Volo.Abp.AspNetCore.Components.AbpComponentBase
+@inject IJSRuntime JsRuntime
+@inject NavigationManager Navigation
+@inject IStringLocalizer<AbpUiResource> UiLocalizer
+
+<div>
+    <AuthorizeView>
+        <Authorized>
+            @{
+                var displayName = CurrentUser.UserName;
+                if (CurrentTenant.Name != null)
+                {
+                    displayName = CurrentTenant.Name + "\\" + CurrentUser.UserName;
+                }
+            }
+            <Logout DisplayName="@displayName" UserName="@CurrentUser.UserName">
+                <HeaderTemplate></HeaderTemplate>
+                <LinkTemplate>
+                    @if (Menu != null)
+                    {
+                        @foreach (var menuItem in Menu.Items)
+                        {
+                            <a @onclick="@(() => NavigateToAsync(menuItem.Url, menuItem.Target))">@menuItem.DisplayName</a>
+                        }
+                    }
+                    <Divider></Divider>
+                    <a @onclick="BeginSignOut">@UiLocalizer["Logout"]</a>
+                </LinkTemplate>
+            </Logout>
+        </Authorized>
+        <NotAuthorized>
+            <a class="btn btn-primary ms-md-3" href="authentication/login">@UiLocalizer["Login"]</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>

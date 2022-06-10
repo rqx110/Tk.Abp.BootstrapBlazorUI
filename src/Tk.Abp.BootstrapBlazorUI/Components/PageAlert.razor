@@ -1,0 +1,62 @@
+﻿@using Volo.Abp.AspNetCore.Components.Alerts
+@using System.Collections.Specialized
+@using Microsoft.AspNetCore.Components.Routing
+
+@foreach (var message in _messages)
+{
+    <Alert ShowDismiss="@message.Dismissible" Color="@GetAlertColor(message)" Icon="@GetAlertIcon(message)">@message.Text</Alert>
+}
+
+@code {
+
+    private readonly List<AlertMessage> _messages = new();
+
+    [Inject]
+    public IAlertManager AlertManager { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        AlertManager.Alerts.CollectionChanged += Alerts_CollectionChanged;
+        NavigationManager.LocationChanged += NavigationManager_LocationChanged;
+
+        _messages.AddRange(AlertManager.Alerts);
+    }
+
+    private void NavigationManager_LocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        AlertManager.Alerts.Clear();
+        _messages.Clear();
+    }
+
+    protected virtual void Alerts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == NotifyCollectionChangedAction.Add)
+        {
+            foreach (var item in e.NewItems)
+            {
+                _messages.Add((AlertMessage)item);
+            }
+        }
+        InvokeAsync(StateHasChanged);
+    }
+
+    private Color GetAlertColor(AlertMessage message) => message.Type switch {
+        AlertType.Success => Color.Success,
+        AlertType.Info => Color.Info,
+        AlertType.Warning => Color.Warning,
+        AlertType.Danger => Color.Danger,
+        _ => Color.Primary
+        };
+    
+    private string GetAlertIcon(AlertMessage message) => message.Type switch {
+        AlertType.Success => "fa fa-check-circle",
+        AlertType.Info => "fa fa-info-circle",
+        AlertType.Warning => "fa fa-warning",
+        AlertType.Danger => "fa fa-times-circle",
+        _ => "fa fa-info-circle"
+        };
+}

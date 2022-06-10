@@ -1,0 +1,69 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Validation.StringValues
+@inherits AbpFeatureManagementComponentBase
+
+<Modal @ref="FeatureModal">
+    <ModalDialog Title="@L["Features"]"
+                 Size="Size.Large"
+                 ShowSaveButton="true"
+                 OnClose="@CloseModal"
+                 OnSaveAsync="SaveAsync">
+        <BodyTemplate>
+            @if (Groups == null || !Groups.Any())
+            {
+                <Empty/>
+            }
+            else
+            {
+                <Tab Placement="@Placement.Left">
+                    @foreach (var group in Groups)
+                    {
+                        <TabItem Key="@GetNormalizedGroupName(group.Name)" Text="@group.DisplayName">
+                            <h4>@group.DisplayName</h4>
+                            <Divider/>
+
+                            @foreach (var feature in group.Features)
+                            {
+                                var disabled = IsDisabled(feature.Provider.Name);
+
+                                @if (feature.ValueType is FreeTextStringValueType)
+                                {
+                                    <Row style="@GetFeatureStyles(feature)">
+                                        <BootstrapInput @bind-Value="@feature.Value"
+                                                        IsDisabled="@disabled"
+                                                        ShowLabel="true"
+                                                        DisplayText="@feature.DisplayName"
+                                                        OnEnterAsync="@(async v => await OnFeatureValueChangedAsync(v, feature))"/>
+                                        @if (feature.Description != null)
+                                        {
+                                            <span>@feature.Description</span>
+                                        }
+                                    </Row>
+                                }
+
+                                @if (feature.ValueType is SelectionStringValueType type)
+                                {
+                                    var items = type.ItemSource.Items.Select(item => 
+                                        new SelectedItem(item.Value, CreateStringLocalizer(item.DisplayText.ResourceName).GetString(item.DisplayText.Name)));
+                                    <Select Color="Color.Primary" Items="@items" @bind-Value="@SelectionStringValues[feature.Name]"></Select>
+                                }
+
+                                @if (feature.ValueType is ToggleStringValueType)
+                                {
+                                    var toggle = ToggleValues[feature.Name];
+                                    <Checkbox
+                                        IsDisabled="@disabled"
+                                        @bind-Value="@toggle"
+                                        OnValueChanged="b => OnSelectedValueChangedAsync(b, feature)"
+                                        ShowLabel="false" ShowAfterLabel="true" DisplayText="@feature.DisplayName">
+                                    </Checkbox>
+                                }
+                            }
+                        </TabItem>
+                    }
+                </Tab>
+            }
+        </BodyTemplate>
+    </ModalDialog>
+</Modal>

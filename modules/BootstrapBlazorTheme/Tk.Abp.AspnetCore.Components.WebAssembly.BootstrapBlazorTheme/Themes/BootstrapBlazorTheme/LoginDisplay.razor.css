@@ -1,0 +1,11 @@
+::deep .logout-avatar, .avatar {
+    display: none;
+}
+
+::deep .dropdown-item.dropdown-user {
+    display: none;
+}
+
+::deep .dropdown-logout .dropdown-toggle{
+    height: auto !important;
+}

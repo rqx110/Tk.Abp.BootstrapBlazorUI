@@ -1,0 +1,56 @@
+﻿@inherits Volo.Abp.AspNetCore.Components.AbpComponentBase
+
+<Modal @ref="Modal">
+    <ModalDialog Title="@($"{L["Permissions"]} - {_entityDisplayName}")"
+                 Size="Size.Large"
+                 ShowSaveButton="true"
+                 OnClose="@ClosingModal"
+                 OnSaveAsync="SaveAsync">
+        <BodyTemplate>
+            <Checkbox @bind-Value="@GrantAll" TValue="bool"
+                      OnStateChanged="GrantAllChanged"
+                      DisplayText="@L["SelectAllInAllTabs"]"
+                      ShowAfterLabel="true">
+            </Checkbox>
+            <Divider/>
+
+            @if (_groups != null)
+            {
+                <Tab Placement="@Placement.Left">
+                    @foreach (var group in _groups)
+                    {
+                        var selectAllInThisTab = group.Permissions.All(x => x.IsGranted);
+                        <TabItem Key="@GetNormalizedGroupName(group.Name)" Text="@group.DisplayName">
+                            <h4>@group.DisplayName</h4>
+                            <Divider/>
+                            <Checkbox
+                                @bind-Value="@selectAllInThisTab"
+                                OnStateChanged="(_, b) => GroupGrantAllChanged(b, group)"
+                                DisplayText="@L["SelectAllInThisTab"]"
+                                ShowLabel="false"
+                                ShowAfterLabel="true">
+                            </Checkbox>
+
+                            <Divider/>
+
+                            @foreach (var permission in group.Permissions)
+                            {
+                                var margin = permission.ParentName != null ? "1rem" : "0";
+                                <div style="margin: @margin">
+                                    <Checkbox
+                                        IsDisabled="@(IsDisabledPermission(permission))"
+                                        @bind-Value="@permission.IsGranted"
+                                        OnStateChanged="(_, b) => PermissionChanged(b, group, permission)"
+                                        DisplayText="@GetShownName(permission)"
+                                        ShowLabel="false"
+                                        ShowAfterLabel="true">
+                                    </Checkbox>
+                                </div>
+                            }
+                        </TabItem>
+                    }
+                </Tab>
+            }
+        </BodyTemplate>
+    </ModalDialog>
+</Modal>

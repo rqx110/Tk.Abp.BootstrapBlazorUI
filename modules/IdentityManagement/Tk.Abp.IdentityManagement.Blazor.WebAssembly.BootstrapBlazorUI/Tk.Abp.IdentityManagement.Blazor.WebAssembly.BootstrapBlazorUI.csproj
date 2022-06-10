@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\configureawait.props" />
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Volo.Abp.Identity.HttpApi.Client" Version="5.2.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\PermissionManagement\Tk.Abp.PermissionManagement.Blazor.WebAssembly.BootstrapBlazorUI\Tk.Abp.PermissionManagement.Blazor.WebAssembly.BootstrapBlazorUI.csproj" />
+      <ProjectReference Include="..\Tk.Abp.IdentityManagement.Blazor.BootstrapBlazorUI\Tk.Abp.IdentityManagement.Blazor.BootstrapBlazorUI.csproj" />
+    </ItemGroup>
+
+
+</Project>

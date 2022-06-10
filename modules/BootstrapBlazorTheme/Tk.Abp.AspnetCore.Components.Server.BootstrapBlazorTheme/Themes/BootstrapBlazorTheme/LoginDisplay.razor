@@ -1,0 +1,37 @@
+﻿@using Volo.Abp.Users
+@using Volo.Abp.MultiTenancy
+@using Microsoft.Extensions.Localization
+@using global::Localization.Resources.AbpUi
+@inject ICurrentUser CurrentUser
+@inject ICurrentTenant CurrentTenant
+@inject NavigationManager Navigation
+@inject IStringLocalizer<AbpUiResource> L
+
+<div>
+    <AuthorizeView>
+        <Authorized>
+            @{
+                var displayName = CurrentUser.UserName;
+                if (CurrentTenant.Name != null)
+                {
+                    displayName = CurrentTenant.Name + "\\" + CurrentUser.UserName;
+                }
+            }
+            <Logout DisplayName="@displayName" UserName="@CurrentUser.UserName">
+                <HeaderTemplate></HeaderTemplate>
+                <LinkTemplate>
+                    @if (Menu != null)
+                    {
+                        @foreach (var menuItem in Menu.Items)
+                        {
+                            <a href="@menuItem.Url?.TrimStart('/', '~')" target="@menuItem.Target">@menuItem.DisplayName</a>
+                        }
+                    }
+                </LinkTemplate>
+            </Logout>
+        </Authorized>
+        <NotAuthorized>
+            <a class="btn btn-primary ms-md-3" href="Account/Login">@L["Login"]</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>

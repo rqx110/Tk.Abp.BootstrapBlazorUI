@@ -1,0 +1,43 @@
+﻿@page "/"
+@namespace BookStore.Blazor.Pages
+@using System.Globalization
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Tk.Abp.AspnetCore.Components.Server.BootstrapBlazorTheme.Bundling
+@using Tk.Abp.AspnetCore.Components.Web.BootstrapBlazorTheme.Themes.BootstrapBlazorTheme
+@using Volo.Abp.AspNetCore.Mvc.UI.Bundling.TagHelpers
+@using Volo.Abp.Localization
+@{
+    Layout = null;
+    var rtl = CultureHelper.IsRtl ? "rtl" : string.Empty;
+}
+
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentCulture.Name" dir="@rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BookStore.Blazor</title>
+    <base href="~/" />
+
+    <abp-style-bundle name="@BlazorBootstrapBlazorThemeBundles.Styles.Global" />
+    
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+</head>
+<body>
+    <component type="typeof(App)" render-mode="ServerPrerendered" />
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <abp-script-bundle name="@BlazorBootstrapBlazorThemeBundles.Scripts.Global" />
+</body>
+</html>

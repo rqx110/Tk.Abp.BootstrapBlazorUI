@@ -1,0 +1,34 @@
+﻿@page "/setting-management"
+@using Microsoft.AspNetCore.Authorization
+@using Tk.Abp.AspnetCore.Components.Web.BootstrapBlazorTheme.Layout
+@using Volo.Abp.Features
+@using Volo.Abp.SettingManagement
+@attribute [Authorize]
+@attribute [RequiresFeature(SettingManagementFeatures.Enable)]
+
+<CascadingValue Value="this" IsFixed="true">
+
+    <AbpPageHeader Title="@L["Settings"]" BreadcrumbItems="@BreadcrumbItems"/>
+
+    <div class="page-content">
+        <Tab ActiveKey="@SelectedGroup" Placement="@Placement.Left">
+            @foreach (var group in SettingComponentCreationContext.Groups)
+            {
+                <TabItem Key="@GetNormalizedString(group.Id)" Text="@group.DisplayName">
+                    <h4>@group.DisplayName</h4>
+                    <Divider/>
+
+                    @{
+                        SettingItemRenders.Add(b =>
+                        {
+                            b.OpenComponent(0, group.ComponentType);
+                            b.CloseComponent();
+                        });
+                    }
+                    @SettingItemRenders.Last()
+
+                </TabItem>
+            }
+        </Tab>
+    </div>
+</CascadingValue>

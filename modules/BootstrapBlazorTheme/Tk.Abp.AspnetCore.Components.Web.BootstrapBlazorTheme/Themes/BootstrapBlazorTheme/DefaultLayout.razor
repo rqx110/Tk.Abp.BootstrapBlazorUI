@@ -1,0 +1,39 @@
+﻿@using Microsoft.Extensions.Options
+@using Tk.Abp.AspnetCore.Components.Web.BootstrapBlazorTheme.Routing
+@using Tk.Abp.AspnetCore.Components.Web.BootstrapBlazorTheme.Settings
+@inherits LayoutComponentBase
+@inject IOptions<AbpRouterOptions> RouterOptions
+
+<AbpLayout SideWidth="0" IsPage="true" IsFullSide="false" IsFixedHeader="true"
+           ShowCollapseBar="false" OnCollapsed="collapsed => OnCollapse(collapsed)"
+           AdditionalAssemblies="RouterOptions.Value.AdditionalAssemblies"
+           class="@LayoutClassString">
+    <Header>
+        <Branding Collapsed="@Collapsed"/>
+        @if (MenuPlacement == MenuPlacement.Top)
+        {
+            <Menu Items="@MenuItems"></Menu>
+        }
+        <div class="flex-fill my-2"></div>
+        <NavToolbar/>
+    </Header>
+    <Side>
+        @if (MenuPlacement == MenuPlacement.Left)
+        {
+            <div class="scroll">
+                <Menu Items="@MenuItems" IsVertical="true" class="mt-2"></Menu>
+            </div>
+        }
+    </Side>
+    <Main>
+        @Body
+    </Main>
+</AbpLayout>
+
+<HeadContent>
+    @if (Theme == BootstrapBlazorThemes.Metronic)
+    {
+        <link href="_content/BootstrapBlazor/css/motronic.min.css" rel="stylesheet"/>
+        <link href="_content/Tk.Abp.AspnetCore.Components.Web.BootstrapBlazorTheme/libs/abp/css/motronic.css" rel="stylesheet"/>
+    }
+</HeadContent>

@@ -1,0 +1,61 @@
+﻿@using Volo.Abp.Localization
+@using System.Globalization
+@using Localization.Resources.AbpUi
+@using Microsoft.AspNetCore.RequestLocalization
+@using Microsoft.Extensions.Localization
+@inject ILanguageProvider LanguageProvider
+@inject NavigationManager NavigationManager
+@inject IAbpRequestLocalizationOptionsProvider RequestLocalizationOptionsProvider
+@inject IStringLocalizer<AbpUiResource> L
+
+@if (Languages != null && Languages.Any())
+{
+    var items = Languages.Select(language => new SelectedItem { Text = language.DisplayName, Value = language.CultureName });
+    
+    <div class="d-flex align-items-center">
+        <Dropdown TValue="string" Value="@_selectedCulture" Items="@items" OnSelectedItemChanged="@ChangeLanguage" Color="Color.Secondary"></Dropdown>
+    </div>
+}
+
+@code {
+    private IReadOnlyList<LanguageInfo> Languages { get; set; }
+    
+    private LanguageInfo _currentLanguage;
+    private string _selectedCulture;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Languages = await LanguageProvider.GetLanguagesAsync();
+        _currentLanguage = Languages.FindByCulture(
+            CultureInfo.CurrentCulture.Name,
+            CultureInfo.CurrentUICulture.Name
+            );
+
+        if (_currentLanguage == null)
+        {
+            var localizationOptions = await RequestLocalizationOptionsProvider.GetLocalizationOptionsAsync();
+            _currentLanguage = new LanguageInfo(
+                localizationOptions.DefaultRequestCulture.Culture.Name,
+                localizationOptions.DefaultRequestCulture.UICulture.Name,
+                localizationOptions.DefaultRequestCulture.UICulture.DisplayName);
+        }
+
+        _selectedCulture = _currentLanguage.CultureName;
+    }
+
+    protected virtual Task ChangeLanguage(SelectedItem item)
+    {
+        if (_selectedCulture == item.Value) return Task.CompletedTask;
+        
+        _currentLanguage = Languages.First(l => l.CultureName == item.Value);
+
+        var relativeUrl = NavigationManager.Uri.RemovePreFix(NavigationManager.BaseUri).EnsureStartsWith('/').EnsureStartsWith('~');
+
+        NavigationManager.NavigateTo(
+            $"Abp/Languages/Switch?culture={_currentLanguage.CultureName}&uiCulture={_currentLanguage.UiCultureName}&returnUrl={relativeUrl}",
+            forceLoad: true
+            );
+
+        return Task.CompletedTask;
+    }
+}

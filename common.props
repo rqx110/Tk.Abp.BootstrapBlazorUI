@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Version>0.2.0</Version>
+    <!--TODO  <PackageIconUrl></PackageIconUrl> -->
+    <PackageProjectUrl>https://github.com/realLiangshiwei/Lsw.Abp.BootstrapBlazorUI</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/realLiangshiwei/Lsw.Abp.BootstrapBlazorUI</RepositoryUrl>
+  </PropertyGroup>
+</Project>

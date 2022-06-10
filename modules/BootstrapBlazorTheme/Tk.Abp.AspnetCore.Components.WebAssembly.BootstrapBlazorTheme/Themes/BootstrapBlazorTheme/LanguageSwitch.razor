@@ -1,0 +1,77 @@
+﻿@using Volo.Abp.Localization
+@using System.Globalization
+@using Localization.Resources.AbpUi
+@using Microsoft.Extensions.Localization
+@using Microsoft.JSInterop
+@inject ILanguageProvider LanguageProvider
+@inject IJSRuntime JsRuntime
+@inject IStringLocalizer<AbpUiResource> L
+
+
+@if (Languages != null && Languages.Any())
+{
+    var items = Languages.Select(language => new SelectedItem { Text = language.DisplayName, Value = language.CultureName });
+    
+    <div class="d-flex align-items-center">
+        <Dropdown TValue="string" Value="@_selectedCulture" Items="@items" OnSelectedItemChanged="@ChangeLanguage" Color="Color.Secondary"></Dropdown>
+    </div>
+}
+
+@code {
+    private IReadOnlyList<LanguageInfo> Languages { get; set; }
+    
+    private LanguageInfo _currentLanguage;
+    private string _selectedCulture;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var selectedLanguageName = await JsRuntime.InvokeAsync<string>(
+            "localStorage.getItem",
+            "Abp.SelectedLanguage"
+            );
+        
+        Languages = await LanguageProvider.GetLanguagesAsync();
+        if (!Languages.Any())
+        {
+            return;
+        }
+        
+        if (!selectedLanguageName.IsNullOrWhiteSpace())
+        {
+            _currentLanguage = Languages.FirstOrDefault(l => l.UiCultureName == selectedLanguageName);
+        }
+
+        if (_currentLanguage == null)
+        {
+            _currentLanguage = Languages.FirstOrDefault(l => l.UiCultureName == CultureInfo.CurrentUICulture.Name);
+        }
+
+        if (_currentLanguage == null)
+        {
+            _currentLanguage = Languages.FirstOrDefault();
+        }
+
+        _selectedCulture = _currentLanguage.CultureName;
+    }
+
+    protected virtual async Task ChangeLanguage(SelectedItem item)
+    {
+        if (_selectedCulture != item.Value)
+        {
+            _currentLanguage = Languages.First(l => l.CultureName == item.Value);
+
+            await JsRuntime.InvokeVoidAsync(
+                "localStorage.setItem",
+                "Abp.SelectedLanguage", _currentLanguage.UiCultureName
+                );
+
+            await JsRuntime.InvokeVoidAsync(
+                "localStorage.setItem",
+                "Abp.IsRtl", CultureInfo.GetCultureInfo(_currentLanguage.UiCultureName).TextInfo.IsRightToLeft
+                );
+
+            await JsRuntime.InvokeVoidAsync("location.reload");
+        }
+    }
+}
+

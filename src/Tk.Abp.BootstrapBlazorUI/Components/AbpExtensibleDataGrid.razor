@@ -1,0 +1,124 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Volo.Abp.Data
+@typeparam TItem
+
+<Table TItem="TItem" @ref="_table"
+       IsPagination="true"
+       PageItemsSource="@PageItemsSource"
+       IsStriped="true"
+       IsBordered="true"
+       ShowLoading="true"
+       ShowExtendButtons="true"
+       ShowDefaultButtons="false"
+       IsExtendButtonsInRowHeader="true"
+       OnQueryAsync="@OnQueryAsync">
+    <RowButtonTemplate>
+        @if (Columns != null)
+        {
+            foreach (var column in Columns)
+            {
+                if (column.Actions.Any())
+                {
+                    foreach (var action in column.Actions)
+                    {
+                        var visible = action.Visible?.Invoke(context) ?? true;
+                        if (visible)
+                        {
+                            if (action.ConfirmationMessage != null)
+                            {
+                                var message = action.ConfirmationMessage.Invoke(context);
+                                <TableCellPopconfirmButton
+                                    Color="@(action.Color != null ? (Color)action.Color : Color.Primary)"
+                                    Icon="@action.Icon"
+                                    Text="@action.Text"
+                                    Content="@message"
+                                    OnConfirm="async () => await action.Clicked(context)"/>
+                            }
+                            else
+                            {
+                                <TableCellButton
+                                    Color="@(action.Color != null ? (Color)action.Color : Color.Primary)"
+                                    Icon="@action.Icon"
+                                    Text="@action.Text"
+                                    IsDisabled="@action.Disabled"
+                                    OnClick="async () => await action.Clicked(context)"/>
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </RowButtonTemplate>
+    <TableColumns>
+        @if (Columns != null)
+        {
+            foreach (var column in Columns)
+            {
+                if (column.Actions.Any())
+                {
+                    continue;
+                }
+                if (column.Component != null)
+                {
+                    <TableColumn TItem="object" TType="object" FieldName="@column.Data" Text="@column.Title">
+                        <Template Context="value">
+                            @RenderCustomTableColumnComponent(column.Component, value.Row)
+                        </Template>
+                    </TableColumn>
+                }
+                else
+                {
+                    if (!ExtensionPropertiesRegex.IsMatch(column.Data))
+                    {
+                        if (column.ValueConverter == null)
+                        {
+                            <TableColumn TItem="object" TType="object" FieldName="@column.Data" Text="@column.Title" Sortable="@column.Sortable"/>
+                        }
+                        else
+                        {
+                            <TableColumn TItem="object" TType="object" FieldName="@column.Data" Text="@column.Title" Sortable="@column.Sortable">
+                                <Template Context="_">
+                                    @GetConvertedFieldValue(context, column)
+                                </Template>
+                            </TableColumn>
+                        }
+                    }
+                    else
+                    {
+                        <TableColumn TItem="object" TType="object" FieldName="@nameof(IHasExtraProperties.ExtraProperties)" Text="@column.Title">
+                            <Template Context="value">
+                                @{
+                                    var entity = value.Row as IHasExtraProperties;
+                                    var propertyName = ExtensionPropertiesRegex.Match(column.Data).Groups[1].Value;
+                                    var propertyValue = entity.GetProperty(propertyName);
+                                    if (propertyValue is bool)
+                                    {
+                                        <Checkbox Value="@propertyValue" IsDisabled="@true"></Checkbox>
+                                    }
+                                    else
+                                    {
+                                        if (column.ValueConverter != null)
+                                        {
+                                            @GetConvertedFieldValue(context, column)
+                                        }
+                                        else
+                                        {
+                                            if (column.DisplayFormat == null)
+                                            {
+                                                @propertyValue
+                                            }
+                                            else
+                                            {
+                                                @string.Format(column.DisplayFormatProvider, column.DisplayFormat, propertyValue)
+                                            }
+                                        }
+                                    }
+                                }
+                            </Template>
+                        </TableColumn>
+                    }
+                }
+            }
+        }
+    </TableColumns>
+</Table>

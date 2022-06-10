@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <Import Project="..\..\..\common.props" />
+    <Import Project="..\..\..\configureawait.props" />
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\BootstrapBlazorTheme\Tk.Abp.AspnetCore.Components.Server.BootstrapBlazorTheme\Tk.Abp.AspnetCore.Components.Server.BootstrapBlazorTheme.csproj" />
+      <ProjectReference Include="..\Tk.Abp.PermissionManagement.Blazor.BootstrapBlazorUI\Tk.Abp.PermissionManagement.Blazor.BootstrapBlazorUI.csproj" />
+    </ItemGroup>
+
+</Project>

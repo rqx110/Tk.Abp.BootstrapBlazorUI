@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+  </PropertyGroup>
+
+  <ItemGroup>
+<!--    <PackageReference Include="Blazorise.Bootstrap5" Version="0.9.5.4" />-->
+<!--    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.5.4" />-->
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="5.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Autofac.WebAssembly" Version="5.2.2" />
+<!--    <PackageReference Include="Volo.Abp.AspNetCore.Components.WebAssembly.BasicTheme" Version="5.2.2" />-->
+  </ItemGroup>
+
+  <ItemGroup><!--    <PackageReference Include="Volo.Abp.Identity.Blazor.WebAssembly" Version="5.2.2" />-->
+<!--    <PackageReference Include="Volo.Abp.TenantManagement.Blazor.WebAssembly" Version="5.2.2" />-->
+<!--    <PackageReference Include="Volo.Abp.SettingManagement.Blazor.WebAssembly" Version="5.2.2" />-->
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\modules\IdentityManagement\Tk.Abp.IdentityManagement.Blazor.WebAssembly.BootstrapBlazorUI\Tk.Abp.IdentityManagement.Blazor.WebAssembly.BootstrapBlazorUI.csproj" />
+    <ProjectReference Include="..\..\..\..\modules\BootstrapBlazorTheme\Tk.Abp.AspnetCore.Components.WebAssembly.BootstrapBlazorTheme\Tk.Abp.AspnetCore.Components.WebAssembly.BootstrapBlazorTheme.csproj" />
+    <ProjectReference Include="..\..\..\..\modules\SettingManagement\Tk.Abp.SettingManagement.Blazor.WebAssembly.BootstrapBlazorUI\Tk.Abp.SettingManagement.Blazor.WebAssembly.BootstrapBlazorUI.csproj" />
+    <ProjectReference Include="..\..\..\..\modules\TenantManagement\Tk.Abp.TenantManagement.Blazor.WebAssembly.BootstrapBlazorUI\Tk.Abp.TenantManagement.Blazor.WebAssembly.BootstrapBlazorUI.csproj" />
+    <ProjectReference Include="..\..\src\BookStore.HttpApi.Client\BookStore.HttpApi.Client.csproj" />
+  </ItemGroup>
+
+</Project>

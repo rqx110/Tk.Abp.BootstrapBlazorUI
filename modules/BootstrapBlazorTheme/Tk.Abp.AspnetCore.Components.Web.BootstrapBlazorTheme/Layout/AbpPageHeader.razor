@@ -1,0 +1,41 @@
+﻿@using Microsoft.Extensions.Options
+@inject IOptions<PageHeaderOptions> Options
+
+<div Class="row">
+    @if (Options.Value.RenderPageTitle)
+    {
+        <div class="col-12">
+            <h3>@PageLayout.Title</h3>
+        </div>
+    }
+
+    @if (Options.Value.RenderBreadcrumbs)
+    {
+        if (BreadcrumbShowHome)
+        {
+            PageLayout.BreadcrumbItems.Insert(0, new AbpBreadcrumbItem(icon: "fa fa-home", url: "/", text: "Home"));
+        }
+        var breadcrumbs = PageLayout.BreadcrumbItems.Select(b => new BreadcrumbItem(b.Text, b.Url));
+        <div class="col">
+            <Breadcrumb Value="@breadcrumbs"/>
+        </div>
+    }
+    @if (Options.Value.RenderToolbar)
+    {
+        <div class="col">
+            <div class="d-flex justify-content-end">
+                @if (Toolbar == null)
+                {
+                    @ChildContent
+                }
+
+                @foreach (var toolbarItemRender in ToolbarItemRenders)
+                {
+                    <div class="ms-1">
+                        @toolbarItemRender
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

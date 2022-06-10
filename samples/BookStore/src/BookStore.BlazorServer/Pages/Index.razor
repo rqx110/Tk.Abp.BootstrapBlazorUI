@@ -1,0 +1,24 @@
+﻿@page "/"
+@inherits BookStoreComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="page-content">
+
+    <Alert Color="@Color.Success"
+           Icon="fa fa-check-circle">
+        Congratulations, BookStore is successfully running!
+    </Alert>
+
+    <Divider/>
+    
+    <div style="text-align: center">
+        <p>@L["LongWelcomeMessage"]</p>
+
+        @if (!CurrentUser.IsAuthenticated)
+        {
+            <a class="btn btn-primary" href="Account/Login">
+                <i class="fa fa-sign-in"></i> @L["Login"]
+            </a>
+        }
+    </div>
+</div>

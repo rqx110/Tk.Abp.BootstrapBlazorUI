@@ -1,0 +1,72 @@
+﻿@page "/identity/roles"
+@attribute [Authorize(IdentityPermissions.Roles.Default)]
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.Identity
+@using Tk.Abp.AspnetCore.Components.Web.BootstrapBlazorTheme.Layout
+@using Tk.Abp.PermissionManagement.Blazor.BootstrapBlazorUI.Components
+@using Volo.Abp.Identity.Localization
+@inject AbpBlazorMessageLocalizerHelper<IdentityResource> LH
+@inherits AbpCrudPageBase<IIdentityRoleAppService, IdentityRoleDto, Guid, GetIdentityRolesInput, IdentityRoleCreateDto, IdentityRoleUpdateDto>
+
+<AbpPageHeader Title="@L["Roles"]" BreadcrumbItems="@BreadcrumbItems" Toolbar="@Toolbar"/>
+
+<div class="page-content">
+    <AbpExtensibleDataGrid TItem="IdentityRoleDto" @ref="DataGrid"
+                           OnQueryAsync="@OnQueryAsync"
+                           Columns="@RoleManagementTableColumns">
+    </AbpExtensibleDataGrid>
+</div>
+
+@if (HasCreatePermission)
+{
+    <Modal @ref="CreateModal">
+        <ModalDialog Title="@L["NewRole"]"
+                     Size="Size.Medium"
+                     ShowFooter="false">
+            <BodyTemplate>
+                <ValidateForm Model="@NewEntity" OnValidSubmit="@CreateEntityAsync">
+                    <Row>
+                        <BootstrapInput @bind-Value="@NewEntity.Name" ShowLabel="true" DisplayText="@L["DisplayName:RoleName"]"/>
+                        <ExtensionProperties TEntityType="IdentityRoleCreateDto" TResourceType="IdentityResource" Entity="@NewEntity" LH="@LH"/>
+                        <Checkbox @bind-Value="NewEntity.IsDefault" ShowAfterLabel="true" DisplayText="@L["DisplayName:IsDefault"]"></Checkbox>
+                        <Checkbox @bind-Value="NewEntity.IsPublic" ShowAfterLabel="true" DisplayText="@L["DisplayName:IsPublic"]"></Checkbox>
+                    </Row>
+                    <div class="form-footer mt-3">
+                        <Button Color="Color.Secondary" Icon="fa fa-times" Text="@L["Cancel"]" OnClick="@CloseCreateModalAsync"></Button>
+                        <Button Color="Color.Primary" ButtonType="ButtonType.Submit" Icon="fa fa-save" Text="@L["Save"]"></Button>
+                    </div>
+                </ValidateForm>
+            </BodyTemplate>
+        </ModalDialog>
+    </Modal>
+}
+
+@if (HasUpdatePermission)
+{
+    <Modal @ref="EditModal">
+        <ModalDialog Title="@L["Edit"]"
+                     Size="Size.Medium"
+                     ShowFooter="false">
+            <BodyTemplate>
+                <ValidateForm Model="@EditingEntity" OnValidSubmit="@UpdateEntityAsync">
+                    <input type="hidden" name="ConcurrencyStamp" @bind-value="EditingEntity.ConcurrencyStamp"/>
+                    <Row>
+                        <BootstrapInput @bind-Value="@EditingEntity.Name" ShowLabel="true" DisplayText="@L["DisplayName:RoleName"]"/>
+                        <ExtensionProperties TEntityType="IdentityRoleUpdateDto" TResourceType="IdentityResource" Entity="@EditingEntity" LH="@LH"/>
+                        <Checkbox @bind-Value="EditingEntity.IsDefault" ShowLabel="false" ShowAfterLabel="true" DisplayText="@L["DisplayName:IsDefault"]"></Checkbox>
+                        <Checkbox @bind-Value="EditingEntity.IsPublic" ShowLabel="false" ShowAfterLabel="true" DisplayText="@L["DisplayName:IsPublic"]"></Checkbox>
+                    </Row>
+                    <div class="form-footer mt-3">
+                        <Button Color="Color.Secondary" Icon="fa fa-times" Text="@L["Cancel"]" OnClick="@CloseEditModalAsync"></Button>
+                        <Button Color="Color.Primary" ButtonType="ButtonType.Submit" Icon="fa fa-save" Text="@L["Save"]"></Button>
+                    </div>
+                </ValidateForm>
+            </BodyTemplate>
+        </ModalDialog>
+    </Modal>
+}
+
+@if (HasManagePermissionsPermission)
+{
+    <PermissionManagementModal @ref="PermissionManagementModal"/>
+}

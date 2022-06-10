@@ -1,0 +1,41 @@
+﻿@inherits Volo.Abp.AspNetCore.Components.AbpComponentBase
+
+<ValidateForm Model="@EmailSettings">
+    <div class="row g-3">
+        <div class="col-12">
+            <BootstrapInput @bind-Value="@EmailSettings.DefaultFromDisplayName" ShowLabel="true" DisplayText="@L["DefaultFromDisplayName"]"/>
+        </div>
+        <div class="col-12">
+            <BootstrapInput @bind-Value="@EmailSettings.DefaultFromAddress" ShowLabel="true" DisplayText="@L["DefaultFromAddress"]"/>
+        </div>
+        <div class="col-12">
+            <BootstrapInput @bind-Value="@EmailSettings.SmtpHost" ShowLabel="true" DisplayText="@L["SmtpHost"]"/>
+        </div>
+        <div class="col-12">
+            <BootstrapInputNumber @bind-Value="@EmailSettings.SmtpPort" ShowLabel="true" DisplayText="@L["SmtpPort"]"/>
+        </div>
+        <div class="col-12">
+            <Checkbox @bind-Value="EmailSettings.SmtpEnableSsl" ShowLabel="false" ShowAfterLabel="true" DisplayText="@L["SmtpEnableSsl"]"></Checkbox>
+        </div>
+        <div class="col-12">
+            <Checkbox @bind-Value="EmailSettings.SmtpUseDefaultCredentials" ShowLabel="false" ShowAfterLabel="true" DisplayText="@L["SmtpUseDefaultCredentials"]"></Checkbox>
+        </div>
+        @if (EmailSettings.SmtpUseDefaultCredentials)
+        {
+            <div class="col-12">
+                <BootstrapInput @bind-Value="@EmailSettings.SmtpDomain" ShowLabel="true" DisplayText="@L["SmtpDomain"]"/>
+            </div>
+            <div class="col-12">
+                <BootstrapInput @bind-Value="@EmailSettings.SmtpUserName" ShowLabel="true" DisplayText="@L["SmtpUserName"]"/>
+            </div>
+            <div class="col-12">
+                <BootstrapPassword @bind-Value="@EmailSettings.SmtpPassword" ShowLabel="true" DisplayText="@L["Password"]"/>
+            </div>
+        }
+        <div class="col-12">
+            <Button Color="@Color.Primary" ButtonType="ButtonType.Submit" OnClick="@UpdateSettingsAsync">
+                @L["Submit"]
+            </Button>
+        </div>
+    </div>
+</ValidateForm>
