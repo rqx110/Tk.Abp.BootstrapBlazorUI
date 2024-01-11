@@ -1,6 +1,10 @@
 ﻿@page "/"
 @inherits BookStoreComponentBase
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@using BootStrapBlazorDemo.Data
+@using BootstrapBlazor.Components
+@using System.Diagnostics.CodeAnalysis
+@using Microsoft.Extensions.Localization
 
 <div class="page-content">
 
@@ -22,3 +26,69 @@
         }
     </div>
 </div>
+
+<p> 每行显示 3 个组件</p>
+<GroupBox Title="表单示例" style="margin-top: 1.5rem;">
+    <ValidateForm Model="@Model">
+        <EditorForm TModel="Foo" ItemsPerRow="6" RowType="RowType.Inline" LabelAlign="Alignment.Right">
+            <FieldItems >
+                <EditorItem @bind-Field="@context.Hobby" Items="@Hobbies"  />
+            </FieldItems>
+            <Buttons>
+                <Button ButtonType="ButtonType.Submit" Icon="fa-solid fa-floppy-disk" Text="提交" />
+            </Buttons>
+        </EditorForm>
+    </ValidateForm>
+</GroupBox>
+
+<ul class="ul-demo mb-3">
+    <li><code>Inline</code> 布局模式下通过设置 <code>LabelAlign="Alignment.Right"</code> 使表单内标签右对齐</li>
+    <li><code>Buttons</code> 模板内可嵌套 <code>div</code> 并设置样式 <code>text-end</code> 使按钮右侧对齐</li>
+</ul>
+<ValidateForm Model="@Model"> 
+     <EditorForm TModel="Foo" ItemsPerRow="3"  LabelAlign="Alignment.Right"> 
+         <FieldItems> 
+             <EditorItem @bind-Field="@context.Hobby" Items="@Hobbies" /> 
+         </FieldItems> 
+         <Buttons> 
+             <div class="text-end"> 
+                 <Button ButtonType="ButtonType.Submit" Icon="fa-solid fa-floppy-disk" Text="提交" /> 
+             </div> 
+         </Buttons> 
+     </EditorForm> 
+ </ValidateForm>
+
+@code {
+
+    [NotNull]
+    private Foo? Model { get; set; }
+
+    [NotNull]
+    private IEnumerable<SelectedItem>? Hobbies { get; set; }
+
+    [Inject]
+    [NotNull]
+    private IStringLocalizer<Foo>? FooLocalizer { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        Hobbies = Foo.GenerateHobbies(FooLocalizer);
+        // ValidateModel = Foo.Generate(FooLocalizer);
+        Model = new Foo()
+            {
+                Name = "张三",
+                Count = 1,
+                Address = "测试地址",
+                DateTime = new DateTime(1997, 12, 05),
+                Education = EnumEducation.Middle
+            };
+    }
+
+    [NotNull]
+    private Foo? ValidateModel { get; set; }
+
+
+} 
