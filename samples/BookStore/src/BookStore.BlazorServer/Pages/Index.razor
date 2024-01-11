@@ -12,7 +12,6 @@
            Icon="fa fa-check-circle">
         Congratulations, BookStore is successfully running!
     </Alert>
-
     <Divider/>
     
     <div style="text-align: center">
@@ -46,17 +45,19 @@
     <li><code>Buttons</code> 模板内可嵌套 <code>div</code> 并设置样式 <code>text-end</code> 使按钮右侧对齐</li>
 </ul>
 <ValidateForm Model="@Model"> 
-     <EditorForm TModel="Foo" ItemsPerRow="3"  LabelAlign="Alignment.Right"> 
-         <FieldItems> 
-             <EditorItem @bind-Field="@context.Hobby" Items="@Hobbies" /> 
-         </FieldItems> 
-         <Buttons> 
-             <div class="text-end"> 
-                 <Button ButtonType="ButtonType.Submit" Icon="fa-solid fa-floppy-disk" Text="提交" /> 
-             </div> 
-         </Buttons> 
-     </EditorForm> 
- </ValidateForm>
+    <EditorForm TModel="Foo" ItemsPerRow="3"  LabelAlign="Alignment.Right"> 
+        <FieldItems> 
+            <EditorItem @bind-Field="@context.Hobby" Items="@Hobbies" /> 
+        </FieldItems> 
+        <Buttons>
+            <div class="text-end">
+                <Button ButtonType="ButtonType.Submit" Icon="fa-solid fa-floppy-disk" Text="@L["提交"]" /> 
+            </div> 
+        </Buttons> 
+    </EditorForm> 
+</ValidateForm>
+
+<Button Color="Color.Primary"  Text="@L["测试"]" />
 
 @code {
 
@@ -89,6 +90,4 @@
 
     [NotNull]
     private Foo? ValidateModel { get; set; }
-
-
 } 
